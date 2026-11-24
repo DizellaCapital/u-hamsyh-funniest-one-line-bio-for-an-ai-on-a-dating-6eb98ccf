@@ -37,6 +37,13 @@ def main() -> None:
     path = os.path.join(out_dir, "entry.txt")
     with open(path, "w", encoding="utf-8", newline="\n") as handle:
         handle.write(BIO + "\n")
+    # Read the file back and verify it holds exactly the validated bio:
+    # a truncated or re-encoded write must fail loudly, not ship silently.
+    with open(path, "r", encoding="utf-8", newline="\n") as handle:
+        written = handle.read()
+    if written != BIO + "\n":
+        raise ValueError("entry.txt does not match the validated bio")
+    validate(written.rstrip("\n"))
 
 
 if __name__ == "__main__":
